@@ -1,1 +1,153 @@
-<?php session_start(); require_once __DIR__ . '/../config.php'; $error = ''; if ($_SERVER['REQUEST_METHOD'] === 'POST') { $username = trim($_POST['username'] ?? ''); $password = $_POST['password'] ?? ''; $stmt = $pdo->prepare( 'SELECT id, password_hash FROM admins WHERE username = ?' ); $stmt->execute([$username]); $admin = $stmt->fetch(); if ( $admin && password_verify($password, $admin['password_hash']) ) { session_regenerate_id(true); $_SESSION['admin_id'] = $admin['id']; header('Location: dashboard.php'); exit; } $error = 'نام کاربری یا رمز عبور اشتباه است.'; } ?> <!DOCTYPE html> <html lang="fa" dir="rtl"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>ورود مدیر | آزمون پیامبران</title> <style> * { box-sizing: border-box; } body { margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #061b16, #103d30); font-family: Tahoma, sans-serif; color: white; } .login-box { width: 90%; max-width: 400px; background: #123b30; padding: 30px; border-radius: 20px; border: 1px solid #c9a64c; box-shadow: 0 12px 40px #0005; } h1 { color: #e8c56a; text-align: center; font-size: 25px; } p { text-align: center; color: #bbd0c5; } input { width: 100%; padding: 15px; margin-top: 15px; border-radius: 10px; border: 1px solid #527367; background: #08271f; color: white; font-size: 16px; } button { width: 100%; margin-top: 20px; padding: 15px; border: none; border-radius: 10px; background: linear-gradient(135deg, #e8c56a, #b99035); color: #09251c; font-size: 17px; font-weight: bold; cursor: pointer; } .error { color: #ff8181; text-align: center; } </style> </head> <body> <div class="login-box"> <h1>پنل مدیریت آزمون پیامبران</h1> <p>ورود مدیر سامانه</p> <?php if ($error): ?> <div class="error"> <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?> </div> <?php endif; ?> <form method="POST"> <input type="text" name="username" placeholder="نام کاربری" autocomplete="username" required > <input type="password" name="password" placeholder="رمز عبور" autocomplete="current-password" required > <button type="submit"> ورود به پنل مدیریت </button> </form> </div> </body> </html>
+<?php
+session_start();
+
+require_once __DIR__ . '/../config.php';
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    $stmt = $pdo->prepare(
+        'SELECT id, password_hash FROM admins WHERE username = ?'
+    );
+
+    $stmt->execute([$username]);
+    $admin = $stmt->fetch();
+
+    if (
+        $admin &&
+        password_verify($password, $admin['password_hash'])
+    ) {
+        session_regenerate_id(true);
+
+        $_SESSION['admin_id'] = $admin['id'];
+
+        header('Location: dashboard.php');
+        exit;
+    }
+
+    $error = 'نام کاربری یا رمز عبور اشتباه است.';
+}
+?>
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ورود مدیر | آزمون پیامبران</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #061b16, #103d30);
+    font-family: Tahoma, sans-serif;
+    color: white;
+}
+
+.login-box {
+    width: 90%;
+    max-width: 400px;
+    background: #123b30;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #c9a64c;
+    box-shadow: 0 12px 40px #0005;
+}
+
+h1 {
+    color: #e8c56a;
+    text-align: center;
+    font-size: 25px;
+}
+
+p {
+    text-align: center;
+    color: #bbd0c5;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: 1px solid #527367;
+    background: #08271f;
+    color: white;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e8c56a, #b99035);
+    color: #09251c;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.error {
+    color: #ff8181;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <h1>پنل مدیریت آزمون پیامبران</h1>
+
+    <p>ورود مدیر سامانه</p>
+
+    <?php if ($error): ?>
+        <div class="error">
+            <?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="POST">
+
+        <input
+            type="text"
+            name="username"
+            placeholder="نام کاربری"
+            autocomplete="username"
+            required
+        >
+
+        <input
+            type="password"
+            name="password"
+            placeholder="رمز عبور"
+            autocomplete="current-password"
+            required
+        >
+
+        <button type="submit">
+            ورود به پنل مدیریت
+        </button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
