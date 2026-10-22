@@ -90,3 +90,12 @@ ALTER TABLE exams
 ADD COLUMN hint_enabled BOOLEAN DEFAULT FALSE,
 ADD COLUMN hint_mode ENUM('continue','pause','add') DEFAULT 'add',
 ADD COLUMN hint_extra_seconds INT DEFAULT 3;
+CREATE TABLE IF NOT EXISTS accepted_answers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT NOT NULL,
+    answer_text VARCHAR(500) NOT NULL,
+
+    FOREIGN KEY (question_id)
+    REFERENCES questions(id)
+    ON DELETE CASCADE
+);
