@@ -593,3 +593,189 @@ th {
 
 </body>
 </html>
+<?php
+
+require_once __DIR__ . '/config.php';
+
+$examId = filter_input(
+    INPUT_GET,
+    'id',
+    FILTER_VALIDATE_INT
+);
+
+if (!$examId) {
+    http_response_code(404);
+    exit('آزمون پیدا نشد.');
+}
+
+$stmt = $pdo->prepare("
+    SELECT
+        id,
+        title,
+        theme_background,
+        theme_primary,
+        theme_accent
+    FROM exams
+    WHERE id = ?
+    AND status = 'active'
+");
+
+$stmt->execute([$examId]);
+
+$exam = $stmt->fetch();
+
+if (!$exam) {
+    http_response_code(404);
+    exit('آزمون موردنظر فعال نیست.');
+}
+
+function safeColor(
+    string $color,
+    string $fallback
+): string {
+    return preg_match(
+        '/^#[0-9a-fA-F]{6}$/',
+        $color
+    ) ? $color : $fallback;
+}
+
+$background = safeColor(
+    $exam['theme_background'],
+    '#071e18'
+);
+
+$primary = safeColor(
+    $exam['theme_primary'],
+    '#d6b45b'
+);
+
+$accent = safeColor(
+    $exam['theme_accent'],
+    '#168348'
+);
+?>
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>
+    <?= htmlspecialchars(
+        $exam['title'],
+        ENT_QUOTES,
+        'UTF-8'
+    ) ?>
+</title>
+
+<style>
+:root {
+    --background: <?= $background ?>;
+    --primary: <?= $primary ?>;
+    --accent: <?= $accent ?>;
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+    color: white;
+    font-family: Tahoma, sans-serif;
+}
+
+.container {
+    max-width: 650px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: #123b30;
+    border: 1px solid var(--primary);
+    border-radius: 18px;
+    padding: 25px;
+    margin-top: 25px;
+}
+
+h1 {
+    color: var(--primary);
+}
+
+button {
+    background: var(--primary);
+    color: #071e18;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            <?= htmlspecialchars(
+                $exam['title'],
+                ENT_QUOTES,
+                'UTF-8'
+            ) ?>
+        </h1>
+
+        <p>
+            برای شرکت در آزمون، اطلاعات خود را ثبت کنید.
+        </p>
+
+        <form id="registrationForm">
+
+            <input
+                type="hidden"
+                name="exam_id"
+                value="<?= (int)$exam['id'] ?>"
+            >
+
+            <input
+                type="text"
+                name="first_name"
+                placeholder="نام"
+                required
+            >
+
+            <input
+                type="text"
+                name="last_name"
+                placeholder="نام خانوادگی"
+                required
+            >
+
+            <input
+                type="tel"
+                name="phone"
+                placeholder="شماره تماس"
+                required
+            >
+
+            <button type="submit">
+                شروع آزمون
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>
