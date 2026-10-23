@@ -149,3 +149,5 @@ ADD COLUMN status ENUM(
     'completed',
     'expired'
 ) NOT NULL DEFAULT 'in_progress';
+CREATE INDEX idx_attempts_participant_exam
+ON attempts(participant_id, exam_id);
