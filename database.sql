@@ -143,3 +143,9 @@ CREATE TABLE attempt_questions (
     FOREIGN KEY (question_id)
         REFERENCES questions(id)
 );
+ALTER TABLE attempts
+ADD COLUMN status ENUM(
+    'in_progress',
+    'completed',
+    'expired'
+) NOT NULL DEFAULT 'in_progress';
