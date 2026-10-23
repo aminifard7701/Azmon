@@ -99,3 +99,10 @@ CREATE TABLE IF NOT EXISTS accepted_answers (
     REFERENCES questions(id)
     ON DELETE CASCADE
 );
+ALTER TABLE exams
+ADD COLUMN theme_background VARCHAR(7)
+    NOT NULL DEFAULT '#071e18',
+ADD COLUMN theme_primary VARCHAR(7)
+    NOT NULL DEFAULT '#d6b45b',
+ADD COLUMN theme_accent VARCHAR(7)
+    NOT NULL DEFAULT '#168348';
