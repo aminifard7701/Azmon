@@ -106,3 +106,40 @@ ADD COLUMN theme_primary VARCHAR(7)
     NOT NULL DEFAULT '#d6b45b',
 ADD COLUMN theme_accent VARCHAR(7)
     NOT NULL DEFAULT '#168348';
+CREATE TABLE attempt_questions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    attempt_id INT NOT NULL,
+    question_id INT NOT NULL,
+
+    question_order INT NOT NULL,
+
+    started_at DATETIME(6) NULL,
+    deadline_at DATETIME(6) NULL,
+
+    hint_used BOOLEAN NOT NULL DEFAULT FALSE,
+
+    status ENUM(
+        'pending',
+        'active',
+        'answered',
+        'expired'
+    ) NOT NULL DEFAULT 'pending',
+
+    UNIQUE KEY unique_attempt_question (
+        attempt_id,
+        question_id
+    ),
+
+    UNIQUE KEY unique_question_order (
+        attempt_id,
+        question_order
+    ),
+
+    FOREIGN KEY (attempt_id)
+        REFERENCES attempts(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (question_id)
+        REFERENCES questions(id)
+);
